@@ -24,7 +24,7 @@ def parse_signed_request(signed_request, app_secret):
     if data.get('algorithm').upper() != 'HMAC-SHA256':
         raise ValueError("Signed request is using an unknown algorithm")
     else:
-        expected_sig = hmac.new(app_secret, msg=payload, digestmod=hashlib.sha256).digest()
+        expected_sig = hmac.new(str(app_secret), msg=payload, digestmod=hashlib.sha256).digest()
 
     if sig != expected_sig:
         raise ValueError("Signed request signature mismatch")

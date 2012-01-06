@@ -1,7 +1,10 @@
 from django.views.generic.base import View, TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.template import Template, RequestContext
 from django.http import HttpResponseBadRequest
+from django.conf import settings
 
 from utils import parse_signed_request
 from models import FlatFacebookTab, GenericContentFacebookTab
@@ -27,6 +30,10 @@ class FacebookViewMixin(object):
         return {'facebook_data': self.get_facebook_data()}
 
 class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixin, View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(FacebookTabView, self).dispatch(*args, **kwargs)
+    
     def get(self, request, *args, **kwargs):
         if not request.user.is_staff:
             return HttpResponseBadRequest('POSTs Only')
@@ -36,7 +43,7 @@ class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixi
         return self.render_to_response(context)
     
     def post(self, request, *args, **kwargs):
-        if not request.is_secure():
+        if not settings.DEBUG and not request.is_secure():
             return HttpResponseBadRequest('SSL Only')
         if not request.POST.get('signed_request', None):
             return HttpResponseBadRequest('Missing Signed Request')

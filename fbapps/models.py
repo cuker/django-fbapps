@@ -3,12 +3,20 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.sites.models import Site
 
+from urllib import urlencode
+
 from managers import FlatFacebookTabManager
 
 class AbstractFacebookTab(models.Model):
-    #app_id = models.CharField(max_length=255) #CONSIDER, is this necessary?
+    app_id = models.CharField(max_length=255, blank=True) #CONSIDER, is this necessary?
     app_secret = models.CharField(max_length=255)
     template_name = models.CharField(max_length=255, blank=True, null=True, default='fbapps/base.html')
+    
+    def get_add_url(self, **kwargs):
+        params = {'app_id':self.app_id,
+                  'next':'http://%s/' % Site.objects.get_current().domain}
+        params.update(kwargs)
+        return u'https://www.facebook.com/dialog/pagetab?%s' % urlencode(params)
     
     class Meta:
         abstract = True
