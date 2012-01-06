@@ -1,5 +1,6 @@
 from django.views.generic.base import View, TemplateResponseMixin
 from django.views.generic.detail import SingleObjectMixin
+from django.template import Template, RequestContext
 from django.http import HttpResponseBadRequest
 
 from utils import parse_signed_request
@@ -70,6 +71,15 @@ class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixi
                 'profile_id':0,
                 }
 
-flat_tab_view = FacebookTabView.as_view(queryset=FlatFacebookTab.objects.active())
+class FlatFacebookTabView(FacebookTabView):
+    queryset = FlatFacebookTab.objects.active()
+    
+    def get_context_data(self, **kwargs):
+        data = FacebookTabView.get_context_data(self, **kwargs)
+        request_context = RequestContext(self.request, data)
+        data['content'] = Template(self.object.content).render(request_context)
+        return data
+
+flat_tab_view = FlatFacebookTabView.as_view()
 generic_tab_view = FacebookTabView.as_view(model=GenericContentFacebookTab)
 

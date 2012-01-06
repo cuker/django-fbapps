@@ -8,14 +8,14 @@ from managers import FlatFacebookTabManager
 class AbstractFacebookTab(models.Model):
     #app_id = models.CharField(max_length=255) #CONSIDER, is this necessary?
     app_secret = models.CharField(max_length=255)
-    template_name = models.CharField(max_length=255, blank=True, null=True)
+    template_name = models.CharField(max_length=255, blank=True, null=True, default='fbapps/base.html')
     
     class Meta:
         abstract = True
 
 class FlatFacebookTab(AbstractFacebookTab):
     slug = models.SlugField()
-    active = models.BooleanField(db_index=True)
+    active = models.BooleanField(db_index=True, default=True)
     content = models.TextField(blank=True)
     
     sites = models.ManyToManyField(Site)
