@@ -6,7 +6,6 @@ from models import FlatFacebookTab
 class FlatFacebookTabForm(forms.ModelForm):
     def clean_content(self):
         content = self.cleaned_data.get('content', '')
-        print content
         try:
             Template(content)
         except TemplateSyntaxError, e:
