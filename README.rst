@@ -13,6 +13,10 @@ This package enables users to create facebook tabs from their Django site.
 To use you first have to add ``fbapps`` to ``INSTALLED_APPS``, and then
 execute ``syncdb`` to create the tables.
 
+Additionally add the following to your root urlpatterns::
+    
+    url(r'^fbapps/', include('fbapps.urls', namespace='fbapps')),
+
 
 FlatFacebookTab
 ===============
