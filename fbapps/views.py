@@ -18,9 +18,12 @@ class FacebookViewMixin(object):
     def get_facebook_data(self):
         """Return dictionary with signed request data."""
         if getattr(self, '_facebook_data', None) is None:
-            app_secret = self.get_app_secret()
-            signed_request = self.request.POST['signed_request']
-            self._facebook_data = self._parse_signed_request(signed_request, app_secret)
+            if 'signed_request' in self.request.POST:
+                app_secret = self.get_app_secret()
+                signed_request = self.request.POST['signed_request']
+                self._facebook_data = self._parse_signed_request(signed_request, app_secret)
+            else:
+                self._facebook_data = dict()
         return self._facebook_data
     
     def _parse_signed_request(self, signed_request, app_secret):
@@ -30,6 +33,9 @@ class FacebookViewMixin(object):
         return {'facebook_data': self.get_facebook_data()}
 
 class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixin, View):
+    require_ssl = True
+    require_signed_request = True
+    
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(FacebookTabView, self).dispatch(*args, **kwargs)
@@ -43,9 +49,9 @@ class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixi
         return self.render_to_response(context)
     
     def post(self, request, *args, **kwargs):
-        if not settings.DEBUG and not request.is_secure():
+        if self.require_ssl and not settings.DEBUG and not request.is_secure():
             return HttpResponseBadRequest('SSL Only')
-        if not request.POST.get('signed_request', None):
+        if self.require_signed_request and not request.POST.get('signed_request', None):
             return HttpResponseBadRequest('Missing Signed Request')
         self.object = self.get_object()
         context = self.get_context_data(**kwargs)
