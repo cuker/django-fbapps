@@ -1,7 +1,10 @@
 <html>
 <head>
+{% block extrahead %}{% endblock %}
 </head>
-<body>
+<body id="{% block body_id %}default{% endblock body_id %}" class="{% block body_class %}{% endblock body_class %}" {% block body_attr %}{% endblock body_attr %}>
+{% block content %}
 {{content}}
+{% endblock %}
 </body>
 </html>
