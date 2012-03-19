@@ -1,9 +1,9 @@
 import os
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, find_packages
 
 setup(
     name='django-fbapps',
@@ -29,11 +29,7 @@ setup(
     tests_require=(
         'django-setuptest',
     ),
-    packages=[
-        'fbapps',
-        'fbapps.tests',
-    ],
-
-
+    packages=find_packages(exclude=['test_environment']),
+    include_package_data = True,
 )
 
