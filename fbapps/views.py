@@ -11,6 +11,8 @@ from models import FlatFacebookTab, GenericContentFacebookTab
 
 import datetime
 
+REQUIRE_SSL = getattr(settings, 'FBAPPS_REQUIRE_SSL', True)
+
 class FacebookViewMixin(object):
     def get_app_secret(self):
         raise NotImplementedError
@@ -33,7 +35,7 @@ class FacebookViewMixin(object):
         return {'facebook_data': self.get_facebook_data()}
 
 class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixin, View):
-    require_ssl = True
+    require_ssl = REQUIRE_SSL
     require_signed_request = True
     
     @method_decorator(csrf_exempt)
