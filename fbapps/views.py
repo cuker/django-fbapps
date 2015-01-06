@@ -34,7 +34,7 @@ class FacebookViewMixin(object):
     def get_context_data(self, **kwargs):
         return {'facebook_data': self.get_facebook_data()}
 
-class FacebookTabView(SingleObjectMixin, TemplateResponseMixin, FacebookViewMixin, View):
+class FacebookTabView(SingleObjectMixin, FacebookViewMixin, View):
     require_ssl = REQUIRE_SSL
     require_signed_request = True
     

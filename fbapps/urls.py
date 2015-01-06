@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('fbapps.views',
     url(r'^flat-tab/(?P<slug>[\w\d\-]+)/$', 'flat_tab_view', name='flat-tab'),
